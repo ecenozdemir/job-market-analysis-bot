@@ -1,30 +1,30 @@
 import datetime
+import csv
+import os
 
-# Analiz edilecek gerçek ilan metinleri 
 jobs_to_analyze = [
-    {
-        "title": "ERP Uzmanı",
-        "description": "Üniversitelerin mühendislik bölümlerinden mezun, Süreç analizi ve raporlama yapabilen, SQL ve HANA veritabanı bilen."
-    },
-    {
-        "title": "Veri Analisti",
-        "description": "İleri derecede SQL bilgisi ve tecrübesi olan, Power BI ve Excel bilen, veri modelleme yapabilen."
-    },
-    {
-        "title": "E-Ticaret Planlama",
-        "description": "E-ticaret ERP sistemlerinde yetkin, stok planlama ve KPI takibi yapabilen, Excel bilen."
-    }
+    {"title": "ERP Uzmanı", "description": "SQL, süreç analizi, mühendislik."},
+    {"title": "Veri Analisti", "description": "İleri SQL, Power BI, Excel."},
+    {"title": "E-Ticaret Planlama", "description": "ERP, KPI, Excel, stok planlama."}
 ]
 
-def analyze_market():
-    keywords = ["SQL", "Excel", "Power BI", "ERP", "Python", "Mühendislik", "İngilizce"]
-    print(f"--- PİYASA ANALİZ RAPORU ({datetime.date.today()}) ---")
+def analyze_and_save():
+    keywords = ["SQL", "Excel", "Power BI", "ERP", "Python", "Mühendislik"]
+    date_str = datetime.date.today().strftime("%Y-%m-%d")
     
-    for job in jobs_to_analyze:
-        found = [skill for skill in keywords if skill.lower() in job['description'].lower()]
-        print(f"📍 Pozisyon: {job['title']}")
-        print(f"🔎 Aranan Kritik Yetenekler: {', '.join(found)}")
-        print("-" * 30)
+    # Dosya yoksa başlıkları ekle
+    file_exists = os.path.isfile('market_report.csv')
+    
+    with open('market_report.csv', mode='a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(['Tarih', 'Pozisyon', 'Bulunan Yetenekler'])
+            
+        for job in jobs_to_analyze:
+            found = [skill for skill in keywords if skill.lower() in job['description'].lower()]
+            writer.writerow([date_str, job['title'], ', '.join(found)])
+    
+    print("✅ Analiz tamamlandı ve market_report.csv dosyasına kaydedildi.")
 
 if __name__ == "__main__":
-    analyze_market()
+    analyze_and_save()
