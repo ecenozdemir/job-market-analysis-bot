@@ -4,7 +4,7 @@ import datetime
 jobs_to_analyze = [
     {
         "title": "ERP Uzmanı",
-        "description": "Üniversitelerin mühendislik bölümlerinden mezun, Süreç analizi ve raporlama yapabilen, SQL ve HANA teitabanı bilen."
+        "description": "Üniversitelerin mühendislik bölümlerinden mezun, Süreç analizi ve raporlama yapabilen, SQL ve HANA veritabanı bilen."
     },
     {
         "title": "Veri Analisti",
