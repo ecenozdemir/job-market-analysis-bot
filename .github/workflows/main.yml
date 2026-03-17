@@ -2,12 +2,14 @@ name: Daily Job Analysis Bot
 
 on:
   schedule:
-    - cron: '0 6 * * *' # Her sabah 09:00 TR
+    - cron: '0 6 * * *'
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
