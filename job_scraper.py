@@ -2,16 +2,17 @@ import datetime
 import csv
 import os
 
+# Test için 'tekstil' kelimesini eklediğimizden emin olalım
 jobs_to_analyze = [
-    {"title": "ERP Uzmanı", "description": "Tekstil fabrikamızda süreçleri yönetecek, SQL bilen uzman."}, # Eşleşecek!
-    {"title": "Veri Analisti", "description": "İleri SQL, Power BI, Excel."},
-    {"title": "E-Ticaret Planlama", "description": "ERP, KPI, Excel, stok planlama."}
+    {"title": "ERP Uzmanı", "description": "Tekstil sektöründe deneyimli, ERP süreçlerini yönetecek uzman."},
+    {"title": "Veri Analisti", "description": "SQL ve Power BI bilen analist."},
+    {"title": "E-Ticaret Planlama", "description": "ERP ve stok yönetimi."}
 ]
 
 def analyze_and_save():
-    keywords = ["SQL", "Excel", "Power BI", "ERP", "Python", "Mühendislik", "Tekstil"]
+    keywords = ["SQL", "Excel", "Power BI", "ERP", "Python", "Tekstil"]
     date_str = datetime.date.today().strftime("%Y-%m-%d")
-    alerts = [] # Alarmları burada toplayacağız
+    alerts = []
     
     file_exists = os.path.isfile('market_report.csv')
     
@@ -25,17 +26,17 @@ def analyze_and_save():
             found = [skill for skill in keywords if skill.lower() in desc]
             writer.writerow([date_str, job['title'], ', '.join(found)])
             
-            # ALARM MEKANİZMASI: ERP ve Tekstil aynı anda geçiyor mu?
+            # ALARM: Kelimeleri kontrol et
             if "erp" in desc and "tekstil" in desc:
-                alerts.append(f"🔥 DİKKAT: {job['title']} ilanı tam sana göre (ERP + Tekstil içeriği)!")
+                alerts.append(f"🔥 **{job['title']}** ilanı tam sana göre (ERP + Tekstil içeriği)!")
     
-    # Sonuçları ekrana bas (GitHub Actions loglarında görünecek)
-    if alerts:
-        print("\n" + "!"*30)
-        for alert in alerts:
-            print(alert)
-        print("!"*30 + "\n")
-    
+    # GITHUB ÖZET SAYFASINA YAZDIRMA (Burası sihirli kısım)
+    if alerts and 'GITHUB_STEP_SUMMARY' in os.environ:
+        with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+            summary.write("## 🚨 KRİTİK İŞ ALARMI!\n")
+            for alert in alerts:
+                summary.write(f"{alert}\n")
+
     print("✅ Analiz tamamlandı ve kaydedildi.")
 
 if __name__ == "__main__":
