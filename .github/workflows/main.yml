@@ -19,3 +19,11 @@ jobs:
 
       - name: Run Scraper
         run: python job_scraper.py
+
+        - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add market_report.csv
+          git commit -m "Daily market report updated" || exit 0
+          git push
