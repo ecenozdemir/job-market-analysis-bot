@@ -1,0 +1,22 @@
+name: Daily Job Analysis Bot
+
+on:
+  schedule:
+    # Her sabah saat 09:00'da otomatik çalışır (UTC zamanına göre ayarlanır)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # İstediğin zaman elle çalıştırmak için bu buton aktif kalsın
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Run Scraper
+        run: python job_scraper.py
