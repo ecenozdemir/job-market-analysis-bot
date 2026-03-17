@@ -1,3 +1,5 @@
+![Daily Job Analysis Bot](https://github.com/ecenozdemir/job-market-analysis-bot/actions/workflows/main.yml/badge.svg)
+
 # Job Market Gap Analyzer (Kariyer Boşluk Analizi)
 
 ## 🌍 Overview (Genel Bakış)
