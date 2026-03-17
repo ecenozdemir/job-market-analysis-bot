@@ -1,17 +1,18 @@
 import datetime
 import csv
 import os
-import feedparser # İnternetten veri çekmek için kütüphanemiz
+import feedparser
 
 def analyze_real_jobs():
-    # Arama terimi: ERP jobs 
-    # Örnek olarak bir RSS kaynağı kullanıyoruz
-    rss_url = "https://www.upwork.com/ab/feed/jobs/rss?q=erp+specialist" 
-    # Not: Kariyer.net vb. RSS vermediği için Upwork veya Jooble benzeri açık kaynaklar kullanılır.
+    # Arama terimlerini genişlettik: ERP, Data Analyst ve SQL bir arada
+    search_query = "erp+OR+sql+OR+data+analyst"
+    rss_url = f"https://www.upwork.com/ab/feed/jobs/rss?q={search_query}&sort=recency" 
     
     feed = feedparser.parse(rss_url)
     date_str = datetime.date.today().strftime("%Y-%m-%d")
-    keywords = ["SQL", "Excel", "ERP", "Python", "Tekstil", "Textile", "Manufacturing"]
+    
+    # Aradığımız kritik yetenek listesini büyüttük
+    keywords = ["SQL", "Excel", "Power BI", "ERP", "Python", "Tableau", "Reporting", "Tekstil", "Textile"]
     alerts = []
     
     file_exists = os.path.isfile('market_report.csv')
@@ -21,31 +22,33 @@ def analyze_real_jobs():
         if not file_exists:
             writer.writerow(['Tarih', 'Pozisyon', 'Bulunan Yetenekler'])
             
-        # İnternetten gelen her ilanı tara
         for entry in feed.entries:
             title = entry.title
             desc = entry.description.lower()
-            
             found = [skill for skill in keywords if skill.lower() in desc]
-            writer.writerow([date_str, title, ', '.join(found)])
             
-            # ÖZEL ALARM: Eğer tekstil veya üretimle ilgili bir ERP ilanı bulursa
-            if "erp" in desc and ("textile" in desc or "tekstil" in desc or "manufacturing" in desc):
-                alerts.append(f"🎯 **GERÇEK FIRSAT:** {title} (Tekstil/Üretim odaklı ERP ilanı!)")
+            if found: # Sadece içinde anahtar kelimelerimiz geçen ilanları kaydet (Gürültüyü azaltır)
+                writer.writerow([date_str, title, ', '.join(found)])
+            
+            # KRİTİK ALARM: ERP + Tekstil veya SQL + Data Analyst kombinasyonları
+            if ("erp" in desc and ("textile" in desc or "manufacturing" in desc)):
+                alerts.append(f"🎯 **SEKTÖREL FIRSAT:** {title}")
+            elif ("sql" in desc and "python" in desc):
+                alerts.append(f"🐍 **VERİ ANALİZİ FIRSATI:** {title}")
 
-    # GitHub Summary ekranına yazdır
+    # GitHub Summary
     if 'GITHUB_STEP_SUMMARY' in os.environ:
         with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
-            summary.write(f"## 🌍 Gerçek Zamanlı Analiz ({date_str})\n")
-            summary.write(f"Tarama yapılan ilan sayısı: {len(feed.entries)}\n\n")
+            summary.write(f"## 🌍 Genişletilmiş Piyasa Analizi ({date_str})\n")
+            summary.write(f"İncelenen yeni ilan sayısı: {len(feed.entries)}\n\n")
             if alerts:
-                summary.write("### 🚨 KRİTİK ALARMLAR!\n")
+                summary.write("### 🚨 RADARIMIZA TAKILANLAR!\n")
                 for alert in alerts:
                     summary.write(f"- {alert}\n")
             else:
-                summary.write("✅ Bugün kriterlerine tam uyan yeni bir global ilan bulunamadı.\n")
+                summary.write("✅ Kriterlerine tam uyan özel bir alarm tetiklenmedi, ama tüm veriler CSV'ye işlendi.\n")
 
-    print(f"✅ {len(feed.entries)} adet gerçek ilan analiz edildi.")
+    print(f"✅ {len(feed.entries)} ilan tarandı.")
 
 if __name__ == "__main__":
     analyze_real_jobs()
