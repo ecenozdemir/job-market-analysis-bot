@@ -10,20 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 # v2'den v4'e güncelledik
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5 # v2'den v5'e güncelledik
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: Run Scraper
         run: python job_scraper.py
 
-        - name: Commit and push changes
+      - name: Commit and push changes
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add market_report.csv
           git commit -m "Daily market report updated" || exit 0
           git push
